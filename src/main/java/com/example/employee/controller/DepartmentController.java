@@ -27,29 +27,34 @@ public class DepartmentController {
 	@Autowired
 	DepartmentService deptService;
 	
+//method handles POST requests to create a new Department
 	@PostMapping(value="create")
 	 public String addDepartment(@RequestBody Department dept) {
 		String dp = deptService.addDepartment(dept);
 		return dp; 
 	 }
-	
+//method handles PUT request to update employee
 	@PutMapping(value="update/{depId}")
 	public String updateDepartment(@PathVariable long depId,@RequestBody Department dept){
 		String dp=deptService.updateDepartment(depId,dept);
 		return dp;
 	}
-	
+
+//	method handles DELETE request to delete the department
 	@DeleteMapping(value="delete/{depId}")
 	public String deleteDepartment(@PathVariable long depId) {
 		String dp=deptService.deleteDepartment(depId);
 		return dp;
 	}
+//	method handles GET request to fetch all department
 	
 	@GetMapping(value="fetch-departments")
 	public List<DepartmentDTO> getAllDepartment(){
 		List<DepartmentDTO> deptListObjects=deptService.getAllDepartment();
 		return deptListObjects;
 	}
+	
+//	method handles GET request to fetch all employee's under a particular department
 	@GetMapping(value="{depId}")
 	public ExpandDTO expandEmployeeUnderDepartment(@PathVariable long depId ,@RequestParam String expand) {
 		ExpandDTO expandDTO=new ExpandDTO();

@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.employee.customexception.EmployeeNotFoundException;
 import com.example.employee.dto.EmployeeDTO;
 import com.example.employee.dto.EmployeeDetailsDTO;
 import com.example.employee.entity.Department;
 import com.example.employee.entity.Employee;
-import com.example.employee.repositories.DepartmentRepository;
 import com.example.employee.services.EmployeeService;
 
 @RestController
@@ -26,20 +26,22 @@ public class EmployeeController {
 	
 	@Autowired
 	EmployeeService empServ;
-	@Autowired
-	DepartmentRepository deRepository;
 	
+//	method handles POST requests to create a new employee
 	@PostMapping(value="create")
 	public String createEmployee(@RequestBody Employee e) {
 		String msg=empServ.addEmlpoyee(e);
 		return msg;	
 	}
 	
+//	method handles PUT requests to update an existing employee's details using the employee ID.
 	@PutMapping(value="update/{empId}")
 	public String updateEmployee(@PathVariable long empId, @RequestBody Employee e) {
 		String msg=empServ.updateEmployee(empId, e);
 		return msg;
 	}
+	
+//	method handles PUT requests to update an employee's department.
 	@PutMapping(value="update-employeedepartment/{empId}")
 	public String updateEmployeeDepartment(@PathVariable long empId, @RequestBody Department dep) {
 		String msg=empServ.updateEmployeeDepartment(empId,dep);
@@ -47,12 +49,7 @@ public class EmployeeController {
 	}
 	
 	
-//	@GetMapping(value="get/{empId}")
-//	public Employee getEmployeeInfo(@PathVariable String empId) {
-//		Employee e=empServ.getEmployeeInfo(empId);
-//		return e;
-//	}
-	
+	//	method handles GET requests to fetch all employees with pagination support.
 	@GetMapping(value="fetch-employees")
 	public List<EmployeeDTO> getAllEmployee(@RequestParam int pageNo, @RequestParam int pageSize) {
 		List<EmployeeDTO> empListObjects = empServ.getAllEmployee(pageNo, pageSize);
@@ -60,18 +57,14 @@ public class EmployeeController {
 	}
 	
 
-//	@DeleteMapping(value="delete/{empId}")
-//	public String deleteEmployee(@PathVariable String empId) {
-//		String msg=empServ.deleteEmployee(empId);
-//		return msg;
-//	}
-	
+
+// method handles GET requests to fetch all Employee Id with their corresponding name
 	@GetMapping(value="fetch-EmployeeDetails")
-	public List<EmployeeDetailsDTO> getEmployeeNameWithId(@RequestParam boolean lookup){
+	public List<EmployeeDetailsDTO> getEmployeeNameWithId(@RequestParam(required = true) String lookup,@RequestParam int pageNo, @RequestParam int pageSize){
 		List<EmployeeDetailsDTO> empListobject=new ArrayList<>();
-		if(lookup == true){
-		  empListobject=empServ.getEmployeeNameWithId();
-	    }
+		if(lookup.equals("true")){
+		  empListobject=empServ.getEmployeeNameWithId(pageNo,pageSize);
+	    } 
 		return empListobject;
 	}
 }
